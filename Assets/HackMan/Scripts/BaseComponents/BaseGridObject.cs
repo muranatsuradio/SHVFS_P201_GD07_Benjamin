@@ -38,6 +38,16 @@ namespace HackMan.Scripts.BaseComponents
         {
             return (v1.x != v2.x || v1.y != v2.y);
         }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
     public class BaseGridObject : MonoBehaviour

@@ -12,8 +12,14 @@ namespace HackMan.Scripts.BaseComponents
         protected IntVector2 currentInputDirection;
         private IntVector2 previousInputDirection;
 
+        private void Start()
+        {
+            targetGridPosition = transform.position.ToIntVector2();
+        }
+
         protected virtual void Update()
         {
+            // Debug.Log($"Transform: {transform.position}|| TargetGridPosition: {targetGridPosition.x}||{targetGridPosition.y}");
             // If we're arrived...
             if (transform.position == targetGridPosition.ToVector3())
             {
@@ -40,6 +46,8 @@ namespace HackMan.Scripts.BaseComponents
             if (GridPosition == targetGridPosition) return;
 
             progressTarget += MovementSpeed * Time.deltaTime;
+
+            transform.position = Vector3.Lerp(transform.position, targetGridPosition.ToVector3(), progressTarget);
         }
     }
 
