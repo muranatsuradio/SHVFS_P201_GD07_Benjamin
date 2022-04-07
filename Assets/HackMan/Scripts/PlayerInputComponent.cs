@@ -3,31 +3,31 @@ using UnityEngine;
 
 namespace HackMan.Scripts
 {
-    public class HackManComponent : BaseGridMovement
+    public class PlayerInputComponent : MovementComponent
     {
         protected override void Update()
         {
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                currentInputDirection = new IntVector2(0, -1);
+                currentInputDirection = IntVector2.down;
             }
 
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                currentInputDirection = new IntVector2(0, 1);
+                currentInputDirection = IntVector2.up;
             }
 
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                currentInputDirection = new IntVector2(1, 0);
+                currentInputDirection = IntVector2.right;
             }
 
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                currentInputDirection = new IntVector2(-1, 0);
+                currentInputDirection = IntVector2.left;
             }
             
-            Debug.Log($"{currentInputDirection.x}||{currentInputDirection.y}");
+            //Debug.Log($"{currentInputDirection.x}||{currentInputDirection.y}");
             base.Update();
         }
     }
