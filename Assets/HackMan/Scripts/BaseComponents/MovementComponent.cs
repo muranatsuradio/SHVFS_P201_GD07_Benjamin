@@ -7,9 +7,9 @@ namespace HackMan.Scripts.BaseComponents
     {
         public float MovementSpeed;
         protected IntVector2 targetGridPosition;
-        protected float progressTarget = 1f;
+        private float _progressTarget = 1f;
         protected IntVector2 currentInputDirection;
-        private IntVector2 previousInputDirection;
+        private IntVector2 _previousInputDirection;
 
         protected virtual void Start()
         {
@@ -22,7 +22,7 @@ namespace HackMan.Scripts.BaseComponents
             // If we're arrived...
             if (transform.position == targetGridPosition.ToVector3())
             {
-                progressTarget = 0f;
+                _progressTarget = 0f;
                 GridPosition = targetGridPosition;
             }
 
@@ -30,19 +30,19 @@ namespace HackMan.Scripts.BaseComponents
             if (GridPosition == targetGridPosition && !(GridPosition + currentInputDirection).IsWall())
             {
                 targetGridPosition += currentInputDirection;
-                previousInputDirection = currentInputDirection;
+                _previousInputDirection = currentInputDirection;
             }
             // If we set a new target AND our current input is NOT VALID -> IS A WALL
-            else if (GridPosition == targetGridPosition && !(GridPosition + previousInputDirection).IsWall())
+            else if (GridPosition == targetGridPosition && !(GridPosition + _previousInputDirection).IsWall())
             {
-                targetGridPosition += previousInputDirection;
+                targetGridPosition += _previousInputDirection;
             }
 
             if (GridPosition == targetGridPosition) return;
 
-            progressTarget += MovementSpeed * Time.deltaTime;
+            _progressTarget += MovementSpeed * Time.deltaTime;
 
-            transform.position = Vector3.Lerp(transform.position, targetGridPosition.ToVector3(), progressTarget);
+            transform.position = Vector3.Lerp(transform.position, targetGridPosition.ToVector3(), _progressTarget);
         }
     }
 

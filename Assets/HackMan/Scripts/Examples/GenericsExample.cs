@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace HackMan.Scripts
+namespace HackMan.Scripts.Examples
 {
     public class GenericsExample : MonoBehaviour
     {

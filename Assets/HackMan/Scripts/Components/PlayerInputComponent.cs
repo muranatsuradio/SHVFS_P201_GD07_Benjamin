@@ -1,7 +1,7 @@
 using HackMan.Scripts.BaseComponents;
 using UnityEngine;
 
-namespace HackMan.Scripts
+namespace HackMan.Scripts.Components
 {
     public class PlayerInputComponent : MovementComponent
     {

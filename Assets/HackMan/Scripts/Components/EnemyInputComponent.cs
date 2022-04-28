@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using HackMan.Scripts.BaseComponents;
-using HackMan.Scripts.Systems;
-using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace HackMan.Scripts
+namespace HackMan.Scripts.Components
 {
     public class EnemyInputComponent : MovementComponent
     {
