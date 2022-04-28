@@ -1,4 +1,6 @@
+using System;
 using HackMan.Scripts.BaseComponents;
+using HackMan.Scripts.Systems;
 using UnityEngine;
 
 namespace HackMan.Scripts.Components

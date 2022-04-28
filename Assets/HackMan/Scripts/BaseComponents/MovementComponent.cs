@@ -42,7 +42,7 @@ namespace HackMan.Scripts.BaseComponents
 
             _progressTarget += MovementSpeed * Time.deltaTime;
 
-            transform.position = Vector3.Lerp(transform.position, targetGridPosition.ToVector3(), _progressTarget);
+            transform.position = Vector3.Lerp(GridPosition.ToVector3(), targetGridPosition.ToVector3(), _progressTarget);
         }
     }
 

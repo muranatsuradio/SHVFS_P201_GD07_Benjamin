@@ -1,5 +1,7 @@
+using System.IO;
 using System.Linq;
 using HackMan.Scripts.BaseComponents;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace HackMan.Scripts.Systems
@@ -22,19 +24,23 @@ namespace HackMan.Scripts.Systems
 
         protected override void Awake()
         {
-            GenerateLevel();
+            AppDataSystem.Save(new LevelGrid(Grid), "Level0");
+
+            var level0 = AppDataSystem.Load<LevelGrid>("Level0");
+            
+            GenerateLevel(level0);
         }
 
-        private void GenerateLevel()
+        private void GenerateLevel(LevelGrid levelGrid)
         {
             var gridParentGameObject = new GameObject("[GRID]");
-            var gridSizeY = Grid.GetLength(0);
-            var gridSizeX = Grid.GetLength(1);
+            var gridSizeY = levelGrid.Grid.GetLength(0);
+            var gridSizeX = levelGrid.Grid.GetLength(1);
             for (var y = 0; y < gridSizeY; y++)
             {
                 for (var x = 0; x < gridSizeX; x++)
                 {
-                    var gridObjectPrefab = BaseGridObjectPrefabs[Grid[y, x]];
+                    var gridObjectPrefab = BaseGridObjectPrefabs[levelGrid.Grid[y, x]];
                     var gridObjectClone = Instantiate(gridObjectPrefab);
                     gridObjectClone.transform.parent = gridParentGameObject.transform;
                     gridObjectClone.GridPosition = new IntVector2(x, -y);
@@ -49,5 +55,33 @@ namespace HackMan.Scripts.Systems
         {
             return Grid.Cast<int>().Count(baseGrid => baseGrid == 0);
         }
+
+        #region C6
+
+        [ContextMenu("Log Grid")]
+        private void LogGrid()
+        {
+            var obj = JsonConvert.SerializeObject(Grid);
+            Debug.Log(obj);
+        }
+
+        [ContextMenu("Save Level")]
+        private void SaveLevel()
+        {
+            var savedGrid = JsonConvert.SerializeObject(Grid);
+            var fullFilePath = $"{Application.dataPath}/StreamingAssets/Levels/Level_0.json";
+
+            if (!File.Exists(fullFilePath))
+            {
+                var fileStream = File.Create(fullFilePath);
+                fileStream.Close();
+            }
+
+            File.WriteAllText(fullFilePath, savedGrid);
+
+            Debug.Log($"saved level: {savedGrid}");
+        }
+
+        #endregion
     }
 }

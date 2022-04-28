@@ -131,7 +131,7 @@ MonoBehaviour:
   GridPosition:
     x: 0
     y: 0
-  MovementSpeed: 2
+  MovementSpeed: 4
 --- !u!114 &5604218451031872573
 MonoBehaviour:
   m_ObjectHideFlags: 0
