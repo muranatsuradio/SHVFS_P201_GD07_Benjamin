@@ -1,7 +1,6 @@
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using HackMan.Scripts.BaseComponents;
-using Newtonsoft.Json;
 using UnityEngine;
 
 namespace HackMan.Scripts.Systems
@@ -10,30 +9,74 @@ namespace HackMan.Scripts.Systems
     {
         public BaseGridObject[] BaseGridObjectPrefabs;
 
+        public static LevelGrid CurrentLevel => _currentLevel;
+        private static LevelGrid _currentLevel;
+        private List<LevelGrid> _levels;
+        private GameObject _levelParentGameObject;
+        
+        #region GridNotes
+
         // 0: Pill, 1: Wall, 2: HackMan, 3: Ghost.
-        public static int[,] Grid = new int[,]
-        {
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 2, 1, 0, 0, 1, 0, 0, 0, 1},
-            {1, 0, 1, 1, 0, 0, 0, 1, 3, 1},
-            {1, 0, 0, 0, 0, 1, 0, 1, 3, 1},
-            {1, 0, 1, 1, 0, 1, 0, 1, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        };
+        // public static int[,] Grid = new int[,]
+        // {
+        //     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        //     {1, 2, 0, 0, 0, 0, 0, 0, 0, 3, 1},
+        //     {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+        //     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        //     {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+        //     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        //     {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+        //     {1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1},
+        //     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        // };
+
+        #endregion
 
         protected override void Awake()
         {
-            AppDataSystem.Save(new LevelGrid(Grid), "Level0");
+            _levels = AppDataSystem.LoadAll<LevelGrid>();
 
-            var level0 = AppDataSystem.Load<LevelGrid>("Level0");
+            Generate();
+        }
+
+        public void Generate()
+        {
+            ClearLevel();
             
-            GenerateLevel(level0);
+            CollectionSystem.Instance.ResetCollectedAmount();
+            
+            while (true)
+            {
+                var index = Random.Range(0, _levels.Count);
+
+                if (_currentLevel != null && _currentLevel == _levels[index]) continue;
+                
+                _currentLevel = _levels[index];
+                    
+                break;
+            }
+            
+            GenerateLevel(_currentLevel);
+        }
+
+        private void ClearLevel()
+        {
+            if (!_levelParentGameObject)
+            {
+                _levelParentGameObject = new GameObject("[GRID]");
+            }
+
+            if (_levelParentGameObject.transform.childCount == 0) return;
+
+            for (var i = 0; i < _levelParentGameObject.transform.childCount; i++)
+            {
+                Destroy(_levelParentGameObject.transform.GetChild(i).gameObject);
+            }
         }
 
         private void GenerateLevel(LevelGrid levelGrid)
         {
-            var gridParentGameObject = new GameObject("[GRID]");
+            
             var gridSizeY = levelGrid.Grid.GetLength(0);
             var gridSizeX = levelGrid.Grid.GetLength(1);
             for (var y = 0; y < gridSizeY; y++)
@@ -42,7 +85,7 @@ namespace HackMan.Scripts.Systems
                 {
                     var gridObjectPrefab = BaseGridObjectPrefabs[levelGrid.Grid[y, x]];
                     var gridObjectClone = Instantiate(gridObjectPrefab);
-                    gridObjectClone.transform.parent = gridParentGameObject.transform;
+                    gridObjectClone.transform.parent = _levelParentGameObject.transform;
                     gridObjectClone.GridPosition = new IntVector2(x, -y);
                     gridObjectClone.transform.position = new Vector3(gridObjectClone.GridPosition.x,
                         gridObjectClone.GridPosition.y, 0);
@@ -53,35 +96,35 @@ namespace HackMan.Scripts.Systems
 
         public int GetCollectionAmount()
         {
-            return Grid.Cast<int>().Count(baseGrid => baseGrid == 0);
+            return _currentLevel.Grid.Cast<int>().Count(baseGrid => baseGrid == 0);
         }
 
-        #region C6
-
-        [ContextMenu("Log Grid")]
-        private void LogGrid()
-        {
-            var obj = JsonConvert.SerializeObject(Grid);
-            Debug.Log(obj);
-        }
-
-        [ContextMenu("Save Level")]
-        private void SaveLevel()
-        {
-            var savedGrid = JsonConvert.SerializeObject(Grid);
-            var fullFilePath = $"{Application.dataPath}/StreamingAssets/Levels/Level_0.json";
-
-            if (!File.Exists(fullFilePath))
-            {
-                var fileStream = File.Create(fullFilePath);
-                fileStream.Close();
-            }
-
-            File.WriteAllText(fullFilePath, savedGrid);
-
-            Debug.Log($"saved level: {savedGrid}");
-        }
-
-        #endregion
+        // #region C6
+        //
+        // [ContextMenu("Log Grid")]
+        // private void LogGrid()
+        // {
+        //     var obj = JsonConvert.SerializeObject(Grid);
+        //     Debug.Log(obj);
+        // }
+        //
+        // [ContextMenu("Save Level")]
+        // private void SaveLevel()
+        // {
+        //     var savedGrid = JsonConvert.SerializeObject(Grid);
+        //     var fullFilePath = $"{Application.dataPath}/StreamingAssets/Levels/Level_0.json";
+        //
+        //     if (!File.Exists(fullFilePath))
+        //     {
+        //         var fileStream = File.Create(fullFilePath);
+        //         fileStream.Close();
+        //     }
+        //
+        //     File.WriteAllText(fullFilePath, savedGrid);
+        //
+        //     Debug.Log($"saved level: {savedGrid}");
+        // }
+        //
+        // #endregion
     }
 }

@@ -17,7 +17,7 @@ namespace HackMan.Scripts.BaseComponents
 
         public static bool IsWall(this IntVector2 vector2)
         {
-            return LevelGeneratorSystem.Grid[Mathf.Abs(vector2.y), Mathf.Abs(vector2.x)] == 1;
+            return LevelGeneratorSystem.CurrentLevel.Grid[Mathf.Abs(vector2.y), Mathf.Abs(vector2.x)] == 1;
         }
     }
 }

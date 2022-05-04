@@ -19,9 +19,7 @@ namespace HackMan.Scripts.Systems
 
         private void OnGameOver(GameOverEvent gameOverArgs)
         {
-            Debug.Log(gameOverArgs.IsWinning ? "Win" : "Lose");
-
-            SceneManager.LoadScene("SampleScene");
+            LevelGeneratorSystem.Instance.Generate();
         }
     }
 }

@@ -27,5 +27,10 @@ namespace HackMan.Scripts.Systems
             
             NewEventSystem.Instance.Publish(new GameOverEvent(true));
         }
+
+        public void ResetCollectedAmount()
+        {
+            _collectedAmount = 0;
+        }
     }
 }
